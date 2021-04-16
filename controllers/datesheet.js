@@ -75,6 +75,15 @@ exports.deleteDatesheet = (req, res) => {
   const token = req.headers.authorization.split(" ")[1];
   const decoded = jwt_decode(token);
   if (id === decoded.createdBy) {
+    Datesheet.findById({_id:id}).exec((err,datesheet)=>{
+      if(err)
+          return res.status(400).json({
+              message:"Unable to update Datesheet"
+      })
+      for(let i=0;i<datesheet.photos.length;i++){
+          Photo.deleteOne({_id:notice.photos[i]});
+      }
+  })
     Datesheet.deleteOne({ _id: id }, (err) => {
       if (err) return res.send("Cannot delete");
       return res.json({
@@ -127,7 +136,6 @@ exports.updateDatesheet = (req, res) => {
       });
       arr.push(photo.id);
     }
-    console.log(arr);
     Datesheet.updateOne(
       {
         _id: req.params.datesheetId,

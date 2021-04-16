@@ -20,8 +20,7 @@ const noticeSchema=new mongoose.Schema({
             type:Date,
             required:true
         },
-        photos:[{   type: ObjectId,
-                    ref: "Photo", }],
+        photos:[{type: String }],
         createdBy:{
             type:ObjectId,
             ref:"User",

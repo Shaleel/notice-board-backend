@@ -27,7 +27,7 @@ exports.createPhoto=(req,res)=>{
                         error:"Saving tshirt in DB failed"
                     })
                 }
-                return res.json(photo)
+                return res.json(photo.img)
             })
             })
 
@@ -39,7 +39,8 @@ exports.getPhoto=(req,res)=>{
             return res.status(400).json({
                 message:"No photo exist"
             })
-        return res.json(photo.path)
+        if(photo)
+            return res.json(photo.img)
     })
 }
 

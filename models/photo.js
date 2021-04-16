@@ -4,9 +4,7 @@ const photoSchema = new mongoose.Schema(
   {
     
     img: {
-      type: Buffer,
-      required: true,
-      contentType:String
+      type:String 
     },
   },
   { timestamps: true }

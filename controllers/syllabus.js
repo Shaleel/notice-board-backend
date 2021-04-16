@@ -76,7 +76,15 @@ exports.deleteSyllabus=(req,res)=>{
     const token=req.headers.authorization.split(' ')[1]
     const decoded=jwt_decode(token);
     if(id===decoded.createdBy){
-
+        Syllabus.findById({_id:id}).exec((err,syllabus)=>{
+            if(err)
+                return res.status(400).json({
+                    message:"Unable to update Syllabus"
+            })
+            for(let i=0;i<syllabus.photos.length;i++){
+                Photo.deleteOne({_id:notice.photos[i]});
+            }
+        })
             Syllabus.deleteOne({_id:id},(err)=>{
                 if(err)
                     return res.send("Cannot delete")
@@ -99,6 +107,7 @@ exports.getUserSyllabus=(req,res)=>{
     })
 }
 exports.updateSyllabus=(req,res)=>{
+   
     Syllabus.findById({_id:req.params.syllabusId}).exec((err,syllabus)=>{
         if(err)
             return res.status(400).json({

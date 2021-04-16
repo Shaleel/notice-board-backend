@@ -3,6 +3,7 @@ const express=require("express");
 const formidable=require("formidable");
 const fs=require("fs");
 const app=express();
+const cloudinary=require('cloudinary').v2
 const mongoose=require("mongoose");
 const bodyParser = require("body-parser");
 const cors = require("cors");
@@ -28,9 +29,17 @@ mongoose
     console.log("DB CONNECTED");
   });
 
+  cloudinary.config({
+    cloud_name: 'shaleel', 
+    api_key: '344735224786678', 
+    api_secret: '47-Nsacv7xr79-WT0I5_ajJpsAA' 
+  })
+
 
 //Middlewares
-app.use(bodyParser.json());
+app.use(bodyParser.json({limit:'50mb'}));
+app.use(bodyParser.urlencoded({limit: '50mb', extended: true}));
+
 app.use(cors());
 
 //My Routes
@@ -42,7 +51,9 @@ app.use("/api",syllabusRoute)
 app.use("/api",datesheetRoute)
 app.use("/api", authRoute)
 
-
+app.get('/',(req,res)=>{
+  return res.send('hello')
+})
 // starting a server
 app.listen(process.env.PORT||8000,()=>{
     console.log("My First App");

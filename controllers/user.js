@@ -4,20 +4,30 @@ const formidable= require("formidable")
 const jwt_decode=require("jwt-decode")
 const bcrypt=require("bcrypt")
 const expressJwt = require("express-jwt");
+const user = require("../models/user");
 
-exports.getUserById=(req,res,next,id)=>{
-    User.findById(id).exec((err,user)=>{
-        if(err|| !user){
-            return res.status(400).json({
-                error:"NO user was found in BD"
-            })
-        }
-        req.profile = user
-        next()
-    })
+
+
+ exports.getUserById=(req,res)=>{
+     User.findById(req.params.userId).exec((err,user)=>{
+         return res.json(user)
+     })
  }
 
+ exports.getAllUser=(req,res)=>{
+    User.find({}, (err, user) => {
+        res.send(user);
+      }).sort({ createdAt: -1 });
+}
+
 exports.signup= async (req,res)=>{
+    User.findOne({name:req.body.name},(err,user)=>{
+        if(user){
+            return res.status(400).json({
+                message:"User with this name already exists in the database"
+            })
+        }
+    })
     const hashedPassword= await bcrypt.hash(req.body.password, 10)
     const user=new User({name:req.body.name,password:hashedPassword,isAdmin:req.body.isAdmin});
     
@@ -76,7 +86,7 @@ exports.isAllowed=(req,res,next)=>{
     if(req.headers.authorization){
         const header=req.headers.authorization.split(' ')
         //header consist of jwt token after " "
-        if(header.length>1&&jwt.verify(header[1],process.env.SECRET))
+        if(header.length>1&&jwt.verify(JSON.parse(header[1]),process.env.SECRET))
             next()
     }
     else return res.json({message:"Not Allowed"})
